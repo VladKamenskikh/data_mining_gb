@@ -2,6 +2,7 @@ import json
 import time
 from pathlib import Path
 import requests
+from urllib.parse import urlparse
 
 """
 Задача организовать сбор данных,
@@ -34,6 +35,7 @@ class Parse5ka:
         self.save_path = save_path
 
     def _get_response(self, url, *args, **kwargs):
+        url = url.replace(urlparse(url).netloc, urlparse(self.start_url).netloc)
         while True:
             response = requests.get(url, *args, **kwargs)
             if response.status_code == 200:
@@ -66,7 +68,7 @@ class Parse5ka:
 
     def _parse(self, url: str):
         while url:
-            time.sleep(5)
+            time.sleep(0.1)
             response = self._get_response(url, headers=self.headers, params=self.params)
             data = response.json()
             url = data["next"]
